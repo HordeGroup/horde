@@ -1,0 +1,4 @@
+[submodule "web"]
+	path = web
+	url = git@github.com:HordeGroup/horde-portal.git
+	branch = master
