@@ -1,6 +1,9 @@
 package webservice
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/HordeGroup/horde/pkg/repository/user"
+	"github.com/jinzhu/gorm"
+)
 
 type Option struct {
 	Verbose bool
@@ -15,6 +18,6 @@ type Service struct {
 func New(opt Option) *Service {
 	return &Service{
 		verbose: opt.Verbose,
-		User:    NewUserService(opt.DB),
+		User:    NewUserService(user.NewRepo(opt.DB)),
 	}
 }

@@ -2,7 +2,10 @@ package database
 
 import (
 	"fmt"
+	"github.com/HordeGroup/horde/pkg/model"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gopkg.in/gormigrate.v1"
 	"time"
 )
 
@@ -26,4 +29,14 @@ func New(opt Option) (*gorm.DB, error) {
 	db.SingularTable(true)
 	db.DB().SetConnMaxLifetime(time.Hour)
 	return db, nil
+}
+
+func GetMigration() *Migration {
+	return &Migration{
+		Options: gormigrate.DefaultOptions,
+		InitSchema: func(db *gorm.DB) error {
+			return MigrateTables(db, &model.User{}).Error
+		},
+		Migrations: nil,
+	}
 }

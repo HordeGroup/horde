@@ -8,7 +8,7 @@ import (
 
 func GetServerRunnerFunc(appMode string) func() error {
 	switch appMode {
-	case "api":
+	case "web":
 		return webserver.Run
 	default:
 		panic(fmt.Sprintf("unknown app mode %s", appMode))
