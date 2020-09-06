@@ -12,7 +12,7 @@ import (
 type Option struct {
 	Name     string
 	Host     string
-	Port     int
+	Port     int64
 	User     string
 	Password string
 	Debug    bool

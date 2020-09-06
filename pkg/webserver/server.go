@@ -2,14 +2,18 @@ package webserver
 
 import (
 	"fmt"
+	"github.com/HordeGroup/horde/pkg/cache/session"
 	"github.com/HordeGroup/horde/pkg/config"
 	database "github.com/HordeGroup/horde/pkg/datebase"
 	"github.com/HordeGroup/horde/pkg/helper"
 	"github.com/HordeGroup/horde/pkg/webservice"
+	"github.com/go-redis/redis"
 	"github.com/jinzhu/configor"
 	"github.com/jinzhu/gorm"
 	"github.com/rs/zerolog"
 	zlog "github.com/rs/zerolog/log"
+	"strconv"
+	"time"
 )
 
 type Option struct {
@@ -62,8 +66,18 @@ func Run() error {
 		return err
 	}
 
+	redisClient := redis.NewUniversalClient(&redis.UniversalOptions{
+		MasterName: "",
+		Addrs:      []string{":" + strconv.FormatInt(conf.Redis.Port, 10)},
+		Password:   conf.Redis.Password,
+	})
+
+	sessCache := session.NewCache(redisClient, time.Duration(conf.Session.TTL)*time.Second)
+
 	svc := webservice.New(webservice.Option{
-		DB: db,
+		Verbose:   false,
+		DB:        db,
+		SessCache: sessCache,
 	})
 
 	sv := New(Option{

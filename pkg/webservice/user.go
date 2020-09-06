@@ -2,6 +2,7 @@ package webservice
 
 import (
 	"context"
+	"github.com/HordeGroup/horde/pkg/cache/session"
 	"github.com/HordeGroup/horde/pkg/helper"
 	"github.com/HordeGroup/horde/pkg/herror"
 	"github.com/HordeGroup/horde/pkg/model"
@@ -11,33 +12,40 @@ import (
 )
 
 type UserService interface {
-	CheckUser(ctx context.Context, name, password string) error
-	RegisterUser(ctx context.Context, name, password, email, telephone string) (uint32, error)
+	Login(ctx context.Context, name, password string) (session.Session, error)
+	Register(ctx context.Context, name, password, email, telephone string) (uint32, error)
 }
 
 type UserImpl struct {
-	repo user.Repo
+	repo      user.Repo
+	sessCache session.Cache
 }
 
-func NewUserService(repo user.Repo) UserService {
-	return &UserImpl{repo: repo}
+func NewUserService(repo user.Repo, sessCache session.Cache) UserService {
+	return &UserImpl{repo: repo, sessCache: sessCache}
 }
 
-func (u *UserImpl) CheckUser(ctx context.Context, name, password string) error {
+func (u *UserImpl) Login(ctx context.Context, name, password string) (sess session.Session, err error) {
 	var (
-		um  model.User
-		err error
+		um model.User
 	)
 	if um, err = u.repo.GetUserByName(ctx, name); err != nil {
-		return herror.ErrInvalidNameOrPwd
+		err = herror.ErrInvalidNameOrPwd
+		return
 	}
 	if err = bcrypt.CompareHashAndPassword([]byte(um.Password), []byte(password)); err != nil {
-		return herror.ErrInvalidNameOrPwd
+		err = herror.ErrInvalidNameOrPwd
+		return
 	}
-	return nil
+	if sess, err = u.sessCache.New(um.Id); err != nil {
+		zlog.Err(err).Msg("创建SESSION失败")
+		return
+	}
+
+	return
 }
 
-func (u *UserImpl) RegisterUser(ctx context.Context, name, password, email, telephone string) (uint32, error) {
+func (u *UserImpl) Register(ctx context.Context, name, password, email, telephone string) (uint32, error) {
 	if !helper.CheckUserName(name) {
 		return 0, herror.ErrInvalidUserName
 	}

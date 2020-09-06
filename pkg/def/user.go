@@ -17,4 +17,9 @@ type UserLoginRequest struct {
 }
 
 type UserLoginData struct {
+	UserId uint32 `json:"user_id"`
+}
+
+type NeedLoginData struct {
+	NeedLogin bool `json:"need_login"`
 }

@@ -14,3 +14,11 @@ database:
   name: horde
   user: root
   password: liuyanggg.123
+
+redis:
+  host: localhost
+  port: 6379
+  password:
+
+session:
+  ttl: 3600
