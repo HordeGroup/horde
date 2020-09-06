@@ -10,25 +10,36 @@ type repoImpl struct {
 	db *gorm.DB
 }
 
-func (r *repoImpl) CheckUser(ctx context.Context, name, password string) error {
+func (r *repoImpl) GetUserByName(ctx context.Context, name string) (um model.User, err error) {
+	err = r.db.Where("name = ?", name).Find(&um).Error
+	if gorm.IsRecordNotFoundError(err) {
+		err = ErrUserNotFound
+	}
+	return
+}
+
+func (r *repoImpl) CheckUser(ctx context.Context, name, password string) (err error) {
 	um := model.User{
 		Name:     name,
 		Password: password,
 	}
-	return r.db.Find(um).Error
+	err = r.db.Where("name = ?", um.Name).Where("password = ?", password).Find(&um).Error
+	if gorm.IsRecordNotFoundError(err) {
+		err = ErrUserNotFound
+	}
+	return
 }
 
 func (r *repoImpl) CreateUser(ctx context.Context, name, password, email, telephone string) (model.User, error) {
 	um := model.User{
 		Name:      name,
 		Password:  password,
-		Salt:      telephone,
 		Email:     email,
 		Telephone: telephone,
 	}
-	err := r.db.Create(um).Error
+	err := r.db.Create(&um).Error
 	if err != nil {
-		return um, nil
+		return um, err
 	}
 	return um, nil
 }

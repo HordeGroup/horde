@@ -7,6 +7,7 @@ import (
 )
 
 type Repo interface {
+	GetUserByName(ctx context.Context, name string) (model.User, error)
 	CheckUser(ctx context.Context, name, password string) error
 	CreateUser(ctx context.Context, name, password, email, telephone string) (model.User, error)
 }

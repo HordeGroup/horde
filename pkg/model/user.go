@@ -5,8 +5,7 @@ import "time"
 type User struct {
 	Id        uint32    `gorm:"column:id;primary_key;auto_increment"`
 	Name      string    `gorm:"column:name;type:char(16);not null"`
-	Password  string    `gorm:"column:password;type:char(16);not null"`
-	Salt      string    `gorm:"column:salt;type:char(32);not null"`
+	Password  string    `gorm:"column:password;type:varchar(256);not null"`
 	Email     string    `gorm:"column:email;type:varchar(255)"`
 	Telephone string    `gorm:"column:telephone;type:varchar(255)"`
 	CreateAt  time.Time `gorm:"column:created_at;type:timestamp(6);not null;default:now(6)"`

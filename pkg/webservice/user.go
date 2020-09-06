@@ -2,8 +2,12 @@ package webservice
 
 import (
 	"context"
-	"errors"
+	"github.com/HordeGroup/horde/pkg/helper"
+	"github.com/HordeGroup/horde/pkg/herror"
+	"github.com/HordeGroup/horde/pkg/model"
 	"github.com/HordeGroup/horde/pkg/repository/user"
+	zlog "github.com/rs/zerolog/log"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService interface {
@@ -20,20 +24,35 @@ func NewUserService(repo user.Repo) UserService {
 }
 
 func (u *UserImpl) CheckUser(ctx context.Context, name, password string) error {
-	err := u.repo.CheckUser(ctx, name, password)
-	if err != user.ErrUserNotFound {
-		return errors.New("用户名或者密码错误")
+	var (
+		um  model.User
+		err error
+	)
+	if um, err = u.repo.GetUserByName(ctx, name); err != nil {
+		return herror.ErrInvalidNameOrPwd
+	}
+	if err = bcrypt.CompareHashAndPassword([]byte(um.Password), []byte(password)); err != nil {
+		return herror.ErrInvalidNameOrPwd
 	}
 	return nil
 }
 
 func (u *UserImpl) RegisterUser(ctx context.Context, name, password, email, telephone string) (uint32, error) {
-	um, err := u.repo.CreateUser(ctx, name, password, email, telephone)
+	if !helper.CheckUserName(name) {
+		return 0, herror.ErrInvalidUserName
+	}
+	if !helper.CheckUserPwd(password) {
+		return 0, herror.ErrInvalidUserPwd
+	}
+
+	pwdHashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		if err != user.ErrUserDuplicate {
-			return 0, errors.New("用户名已存在")
-		}
-		return 0, err
+		return 0, herror.ErrInvalidUserPwd
+	}
+	um, err := u.repo.CreateUser(ctx, name, string(pwdHashed), email, telephone)
+	if err != nil {
+		zlog.Err(err).Msg("创建用户失败")
+		return 0, herror.ErrUserAlreadyExists
 	}
 
 	return um.Id, nil

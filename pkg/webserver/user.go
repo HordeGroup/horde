@@ -7,17 +7,20 @@ import (
 )
 
 func (sv *Server) UserLogin(c *gin.Context) {
-	var userLogin def.UserLoginRequest
-	if err := c.ShouldBind(&userLogin); err != nil {
+	var (
+		userLogin def.UserLoginRequest
+		err       error
+	)
+	if err = c.ShouldBind(&userLogin); err != nil {
 		render.JSONWithError(c, err)
 		return
 	}
-	err := sv.service.User.CheckUser(c.Request.Context(), userLogin.Name, userLogin.Password)
+	err = sv.service.User.CheckUser(c.Request.Context(), userLogin.Name, userLogin.Password)
 	if err != nil {
 		render.JSONWithError(c, err)
 		return
 	}
-	render.JSONSuccess(c, nil)
+	render.JSONSuccess(c, def.UserLoginData{})
 }
 
 func (sv *Server) UserRegister(c *gin.Context) {
@@ -31,5 +34,5 @@ func (sv *Server) UserRegister(c *gin.Context) {
 		render.JSONWithError(c, err)
 		return
 	}
-	render.JSONSuccess(c, userId)
+	render.JSONSuccess(c, def.UserRegisterData{UserId: userId})
 }
