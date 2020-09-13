@@ -1,7 +1,7 @@
 package def
 
 type UserRegisterRequest struct {
-	Name      string `json:"name" form:"name" binding:"required"`
+	Name      string `json:"user_name" form:"user_name" binding:"required"`
 	Password  string `json:"password" form:"password" binding:"required"`
 	Email     string `json:"email" form:"email"`
 	Telephone string `json:"telephone" form:"telephone"`
@@ -12,7 +12,7 @@ type UserRegisterData struct {
 }
 
 type UserLoginRequest struct {
-	Name     string `json:"name" form:"user_name" binding:"required"`
+	Name     string `json:"user_name" form:"user_name" binding:"required"`
 	Password string `json:"password" form:"password" binding:"required"`
 }
 

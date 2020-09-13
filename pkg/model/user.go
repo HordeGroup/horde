@@ -1,16 +1,12 @@
 package model
 
-import "time"
-
 type User struct {
-	Id        uint32    `gorm:"column:id;primary_key;auto_increment"`
-	Name      string    `gorm:"column:name;type:char(16);not null"`
-	Password  string    `gorm:"column:password;type:varchar(256);not null"`
-	Email     string    `gorm:"column:email;type:varchar(255)"`
-	Telephone string    `gorm:"column:telephone;type:varchar(255)"`
-	CreateAt  time.Time `gorm:"column:created_at;type:timestamp(6);not null;default:now(6)"`
-	UpdateAt  time.Time `gorm:"column:update_at;type:timestamp(6);not null;default:now(6)"`
-	Deleted   uint      `gorm:"column:deleted;type:tinyint;not null;default:0"`
+	Model
+	Id        uint32 `gorm:"column:id;primary_key;auto_increment"`
+	Name      string `gorm:"column:name;type:char(16);not null"`
+	Password  string `gorm:"column:password;type:varchar(256);not null"`
+	Email     string `gorm:"column:email;type:varchar(255)"`
+	Telephone string `gorm:"column:telephone;type:varchar(255)"`
 }
 
 func (User) TableName() string {
