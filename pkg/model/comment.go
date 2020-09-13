@@ -1,7 +1,7 @@
 package model
 
 type Comment struct {
-	Model
+	Id uint32 `gorm:"column:id;primary_key;auto_increment"`
 	// 评论内容
 	Content string `gorm:"column:content;type:text;not null"`
 	// 评论ID 若是跟帖回复,会存在跟帖的评论ID
@@ -10,6 +10,7 @@ type Comment struct {
 	PostId uint32 `gorm:"column:post_id;type:int unsigned;not null"`
 	// 用户ID 创建者ID
 	CreatorId uint32 `gorm:"column:creator_id;type:int unsigned;not null"`
+	Model
 }
 
 func (c Comment) TableName() string {

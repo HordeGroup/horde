@@ -1,7 +1,7 @@
 package horde
 
 import (
-	"github.com/HordeGroup/horde/pkg/context"
+	"context"
 	"github.com/HordeGroup/horde/pkg/model"
 	"github.com/jinzhu/gorm"
 )

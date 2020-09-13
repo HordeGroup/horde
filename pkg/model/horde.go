@@ -30,6 +30,6 @@ func (h Horde) UniqueIndexes() map[string][]string {
 
 func (h Horde) Indexes() map[string][]string {
 	return map[string][]string{
-		"creator": {"creator"},
+		"creator": {"creator_id"},
 	}
 }

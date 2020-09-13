@@ -33,5 +33,9 @@ func (sv *Server) BuildRouter() *gin.Engine {
 		engine.POST("/user/login", sv.UserLogin)
 	}
 
+	{
+		engine.POST("/horde", sv.CreateHorde)
+	}
+
 	return engine
 }

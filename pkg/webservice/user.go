@@ -14,6 +14,7 @@ import (
 type UserService interface {
 	Login(ctx context.Context, name, password string) (session.Session, error)
 	Register(ctx context.Context, name, password, email, telephone string) (uint32, error)
+	Exists(ctx context.Context, id uint32) error
 }
 
 type UserImpl struct {
@@ -64,4 +65,12 @@ func (u *UserImpl) Register(ctx context.Context, name, password, email, telephon
 	}
 
 	return um.Id, nil
+}
+
+func (u *UserImpl) Exists(ctx context.Context, id uint32) error {
+	_, err := u.repo.GetById(ctx, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

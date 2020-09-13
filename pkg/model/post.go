@@ -5,6 +5,7 @@ package model
 */
 type Post struct {
 	Model
+	Id uint32 `gorm:"column:id;primary_key;auto_increment"`
 	// 主题
 	Title string `gorm:"column:title;type:varchar(100);not null"`
 	// 描述

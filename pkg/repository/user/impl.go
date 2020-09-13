@@ -43,3 +43,12 @@ func (r *repoImpl) CreateUser(ctx context.Context, name, password, email, teleph
 	}
 	return um, nil
 }
+
+func (r *repoImpl) GetById(ctx context.Context, id uint32) (um model.User, err error) {
+	if err = r.db.Table(um.TableName()).
+		Where("id = ? ", id).
+		First(&um).Error; err != nil {
+		return
+	}
+	return
+}

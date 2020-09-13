@@ -35,7 +35,7 @@ func GetMigration() *Migration {
 	return &Migration{
 		Options: gormigrate.DefaultOptions,
 		InitSchema: func(db *gorm.DB) error {
-			return MigrateTables(db, &model.User{}).Error
+			return MigrateTables(db, &model.User{}, model.Horde{}, model.Post{}, model.Comment{}).Error
 		},
 		Migrations: nil,
 	}
